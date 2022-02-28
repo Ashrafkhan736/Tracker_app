@@ -6,5 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body></body>
+  <body>
+    <h1>Welcome {{ user["user_name"] }}</h1>
+    <form action="/add/{{user['user_id']}}" method="POST">
+      <label for="name">Tracker name</label>
+      <input type="text" name="name" />
+      <br />
+      <label for="description">Description</label>
+      <input type="text" name="description" id="" />
+      <br />
+      <label for="tracker_type">Tracker type</label>
+      <select name="tracker_type" id="">
+        <option value="Numerical">Numerical</option>
+        <option value="MultipleChoice">MultipleChoice</option>
+        <option value="Time Duration">Time Duration</option>
+      </select>
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+    <h3>List of available trackers</h3>
+    <table>
+      {% for tracker in trackers %}
+      <tr>
+        <td>{{tracker["name"]}}</td>
+        <td>{{tracker["description"]}}</td>
+        <td>
+          <a href="/view/{{ user['user_id'] }}/{{ tracker['tracker_id'] }}">
+            view</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
 </html>

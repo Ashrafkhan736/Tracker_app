@@ -1,0 +1,39 @@
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy()
+
+
+class User(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String, unique=True, nullable=False)
+    trackers = db.relationship('Tracker_info', backref='user', lazy=True)
+
+
+class Tracker_info(db.Model):
+    tracker_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=False)
+    tracker_type = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.user_id'), nullable=False)
+    numerical_log = db.relationship(
+        'Numerical_log', backref='tracker_info', lazy=True)
+
+
+'''
+CREATE TABLE "numerical_log" (
+	"log_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"tracker_id"	INTEGER NOT NULL,
+	"timestamp"	TEXT NOT NULL,
+	"value"	NUMERIC NOT NULL,
+	"note"	TEXT,
+	FOREIGN KEY("tracker_id") REFERENCES "tracker_info"
+);'''
+
+
+class Numerical_log(db.Model):
+    log_id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    value = db.Column(db.Float, nullable=False)
+    note = db.Column(db.String, nullable=True)
+    tracker_id = db.Column(
+        db.Integer, db.ForeignKey('tracker_info.tracker_id'), nullable=False)
