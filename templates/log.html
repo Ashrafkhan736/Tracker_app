@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Information about {{tracker["name"]}}</h1>
+    <p>{{tracker["description"]}}</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Time stamp</th>
+          <th>Value</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs |sort(attribute="timestamp", reverse = True) %}
+        <tr>
+          <td>{{log["timestamp"].strftime("%d %B %Y %H:%M:%S")}}</td>
+          <td>{{log["value"]}}</td>
+          <td>{{log["note"]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="/dashboard/{{tracker['user_id']}}">Go to dashboard</a>
+  </body>
+</html>

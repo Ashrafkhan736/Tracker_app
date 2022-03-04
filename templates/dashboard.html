@@ -22,21 +22,37 @@
         <option value="Time Duration">Time Duration</option>
       </select>
       <br />
+      <label for="options">Options</label>
+      <input
+        type="text"
+        name="options"
+        placeholder="Example : option1,option2,option3"
+      />
+      <br />
       <button type="submit">Submit</button>
     </form>
     <h3>List of available trackers</h3>
     <table>
-      {% for tracker in trackers %}
-      <tr>
-        <td>{{tracker["name"]}}</td>
-        <td>{{tracker["description"]}}</td>
-        <td>
-          <a href="/view/{{ user['user_id'] }}/{{ tracker['tracker_id'] }}">
-            view</a
-          >
-        </td>
-      </tr>
-      {% endfor %}
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Operations</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tracker in trackers %}
+        <tr>
+          <td>{{tracker["name"]}}</td>
+          <td>{{tracker["description"]}}</td>
+          <td>
+            <a href="/view/{{tracker['tracker_id']}}"> view</a>
+
+            <a href="/log/{{tracker['tracker_id']}}">log</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </body>
 </html>

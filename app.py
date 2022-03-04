@@ -1,12 +1,9 @@
 from datetime import datetime
-from crypt import methods
-import os
-from time import time
 from flask import Flask, redirect, render_template, request
 from flask_restful import Api
 from tables import Description
 from model import *
-
+import os
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
@@ -52,9 +49,13 @@ def add(uid):
         tracker_type = request.form["tracker_type"]
         print(tracker_name, tracker_type, description, uid)
         #time = datetime.now()
-        # if tracker_type == "Numerical":
-        tracker = Tracker_info(name=tracker_name,
-                               description=description, tracker_type=tracker_type, user_id=uid)
+        if tracker_type == "MultipleChoice":
+            options = request.form["options"]
+            tracker = Tracker_info(name=tracker_name,
+                                   description=description, tracker_type=tracker_type, user_id=uid, options=options)
+        else:
+            tracker = Tracker_info(name=tracker_name,
+                                   description=description, tracker_type=tracker_type, user_id=uid)
         db.session.add(tracker)
         db.session.commit()
         return redirect("/dashboard/{}".format(uid))
@@ -66,6 +67,32 @@ def dashboard(uid):
         user = User.query.filter(User.user_id == uid).one()
         print(user.trackers)
         return render_template("dashboard.html", user=user, trackers=user.trackers)
+
+
+@app.route("/log/<int:tid>", methods=["GET", "POST"])
+def log(tid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    if request.method == "GET":
+        return render_template("addnumericallog.html", tracker=tracker)
+    else:
+        value = request.form["value"]
+        note = request.form["note"]
+        if tracker.tracker_type == "MultipleChoice":
+            log = Mcq_log(value=value, note=note, tracker_id=tid)
+        else:
+            log = Numerical_log(value=value, note=note, tracker_id=tid)
+        db.session.add(log)
+        db.session.commit()
+        return redirect("/dashboard/{}".format(tracker.user_id))
+
+
+@app.route("/view/<int:tid>")
+def view(tid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    if tracker.tracker_type == "Numerical":
+        return render_template("log.html", tracker=tracker, logs=tracker.numerical_log)
+    else:
+        return render_template("log.html", tracker=tracker, logs=tracker.mcq_log)
 
 
 if __name__ == '__main__':
