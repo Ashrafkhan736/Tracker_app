@@ -73,7 +73,7 @@ def dashboard(uid):
 def log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if request.method == "GET":
-        return render_template("addnumericallog.html", tracker=tracker)
+        return render_template("addlog.html", tracker=tracker)
     else:
         value = request.form["value"]
         note = request.form["note"]
