@@ -12,12 +12,12 @@
       Tracker name : {{tracker["name"]}} <br />
       tracker_type : {{tracker["tracker_type"]}}
     </h3>
-    <form action="/log/{{tracker['tracker_id']}}" method="POST">
+    <form action="/add_log/{{tracker['tracker_id']}}" method="POST">
       <label for="value"> value</label>
       {% if tracker['tracker_type'] == "Numerical" %}
-      <input type="number" name="value" />
+      <input type="number" name="value" required />
       {% else %}
-      <select name="value">
+      <select name="value" required>
         {% for choice in tracker['options'].split(',') %}
         <option value="{{choice}}">{{choice}}</option>
         {% endfor %}
@@ -27,5 +27,6 @@
       <input type="text" name="note" />
       <button type="submit">Submit</button>
     </form>
+    <a href="/dashboard/{{tracker['user_id']}}">Go to dashboard</a>
   </body>
 </html>

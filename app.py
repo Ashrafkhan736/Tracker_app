@@ -1,7 +1,6 @@
 from datetime import datetime
 from flask import Flask, redirect, render_template, request
 from flask_restful import Api
-from tables import Description
 from model import *
 import os
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -41,8 +40,16 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/add/<int:uid>", methods=["GET", "POST"])
-def add(uid):
+@app.route("/dashboard/<int:uid>", methods=["GET", "POST"])
+def dashboard(uid):
+    if request.method == "GET":
+        user = User.query.filter(User.user_id == uid).one()
+        print(user.trackers)
+        return render_template("dashboard.html", user=user, trackers=user.trackers)
+
+
+@app.route("/add_tracker/<int:uid>", methods=["GET", "POST"])
+def add_tracker(uid):
     if request.method == "POST":
         tracker_name = request.form["name"]
         description = request.form["description"]
@@ -61,16 +68,31 @@ def add(uid):
         return redirect("/dashboard/{}".format(uid))
 
 
-@app.route("/dashboard/<int:uid>", methods=["GET", "POST"])
-def dashboard(uid):
+@app.route("/delete_tracker/<int:tid>")
+def delete_tracker(tid):
+    tracker = Tracker_info.query.filter(
+        Tracker_info.tracker_id == tid).one()
+    Tracker_info.query.filter(
+        Tracker_info.tracker_id == tid).delete()
+    db.session.commit()
+    return redirect("/dashboard/{}".format(tracker.user_id))
+
+
+@app.route("/edit_tracker/<int:tid>", methods=["GET", "POST"])
+def edit_tracker(tid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if request.method == "GET":
-        user = User.query.filter(User.user_id == uid).one()
-        print(user.trackers)
-        return render_template("dashboard.html", user=user, trackers=user.trackers)
+        return render_template("edit_tracker.html", tracker=tracker)
+    else:
+        tracker.name = request.form["name"]
+        tracker.description = request.form["description"]
+        db.session.add(tracker)
+        db.session.commit()
+        return redirect("/dashboard/{}".format(tracker.user_id))
 
 
-@app.route("/log/<int:tid>", methods=["GET", "POST"])
-def log(tid):
+@app.route("/add_log/<int:tid>", methods=["GET", "POST"])
+def add_log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if request.method == "GET":
         return render_template("add_log.html", tracker=tracker)
@@ -86,8 +108,8 @@ def log(tid):
         return redirect("/dashboard/{}".format(tracker.user_id))
 
 
-@app.route("/view/<int:tid>")
-def view(tid):
+@app.route("/view_log/<int:tid>")
+def view_log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if tracker.tracker_type == "Numerical":
         return render_template("view_log.html", tracker=tracker, logs=tracker.numerical_log)
@@ -95,30 +117,7 @@ def view(tid):
         return render_template("view_log.html", tracker=tracker, logs=tracker.mcq_log)
 
 
-@app.route("/delete/<int:tid>")
-def delete(tid):
-    tracker = Tracker_info.query.filter(
-        Tracker_info.tracker_id == tid).one()
-    Tracker_info.query.filter(
-        Tracker_info.tracker_id == tid).delete()
-    db.session.commit()
-    return redirect("/dashboard/{}".format(tracker.user_id))
-
-
-@app.route("/edit/<int:tid>", methods=["GET", "POST"])
-def edit(tid):
-    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
-    if request.method == "GET":
-        return render_template("edit_tracker.html", tracker=tracker)
-    else:
-        tracker.name = request.form["name"]
-        tracker.description = request.form["description"]
-        db.session.add(tracker)
-        db.session.commit()
-        return redirect("/dashboard/{}".format(tracker.user_id))
-
-
-@app.route("/deletelog/<int:tid>/<int:lid>")
+@app.route("/delete_log/<int:tid>/<int:lid>")
 def delete_log(tid, lid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if tracker.tracker_type == "MultipleChoice":
@@ -131,7 +130,7 @@ def delete_log(tid, lid):
         return render_template("view_log.html", tracker=tracker, logs=tracker.numerical_log)
 
 
-@app.route("/editlog/<int:tid>/<int:lid>", methods=["GET", "POST"])
+@app.route("/edit_log/<int:tid>/<int:lid>", methods=["GET", "POST"])
 def edit_log(tid, lid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if tracker.tracker_type == "MultipleChoice":
@@ -168,3 +167,4 @@ def edit_log(tid, lid):
 if __name__ == '__main__':
     # Run the Flask app
     app.run(host='127.0.0.1', port=5000)
+    app.debug = True

@@ -8,7 +8,7 @@
   </head>
   <body>
     <h1>Edit the tracker information</h1>
-    <form action="/edit/{{tracker['tracker_id']}}" method="post">
+    <form action="/edit_tracker/{{tracker['tracker_id']}}" method="post">
       <label for="name">Name</label>
       <input type="text" name="name" value="{{tracker['name']}}" />
       <label for="description">Description</label>
@@ -19,5 +19,6 @@
       />
       <button type="submit">Submit</button>
     </form>
+    <a href="/dashboard/{{tracker['user_id']}}">Go to dashboard</a>
   </body>
 </html>

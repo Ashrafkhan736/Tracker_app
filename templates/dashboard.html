@@ -8,7 +8,7 @@
   </head>
   <body>
     <h1>Welcome {{ user["user_name"] }}</h1>
-    <form action="/add/{{user['user_id']}}" method="POST">
+    <form action="/add_tracker/{{user['user_id']}}" method="POST">
       <label for="name">Tracker name</label>
       <input type="text" name="name" required />
       <br />
@@ -45,13 +45,13 @@
           <td>{{tracker["name"]}}</td>
           <td>{{tracker["description"]}}</td>
           <td>
-            <a href="/view/{{tracker['tracker_id']}}"> view</a>
+            <a href="/view_log/{{tracker['tracker_id']}}"> view</a>
 
-            <a href="/log/{{tracker['tracker_id']}}">log</a>
+            <a href="/add_log/{{tracker['tracker_id']}}">log</a>
 
-            <a href="/delete/{{tracker['tracker_id']}}">delete</a>
+            <a href="/delete_tracker/{{tracker['tracker_id']}}">delete</a>
 
-            <a href="/edit/{{tracker['tracker_id']}}">edit</a>
+            <a href="/edit_tracker/{{tracker['tracker_id']}}">edit</a>
           </td>
         </tr>
         {% endfor %}
