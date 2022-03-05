@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Edit your log</h1>
+    <form
+      action="/editlog/{{log['tracker_id']}}/{{log['log_id']}}"
+      method="post"
+    >
+      <label for="timestamp">Time stamp</label>
+      <input
+        type="datetime-local"
+        name="timestamp"
+        value="{{log['timestamp'].strftime('%Y-%m-%dT%H:%M')}}"
+      />
+      <label for="value"> value</label>
+      {% if tracker['tracker_type'] == "Numerical" %}
+      <input type="number" name="value" value="{{log['value']}}" />
+      {% else %}
+      <select name="value" required>
+        {% for choice in tracker['options'].split(',') %}
+        <option value="{{choice}}">{{choice}}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+      <label for="note">note</label>
+      <input type="text" name="note" value="{{log['note']}}" />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>

@@ -73,7 +73,7 @@ def dashboard(uid):
 def log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if request.method == "GET":
-        return render_template("addlog.html", tracker=tracker)
+        return render_template("add_log.html", tracker=tracker)
     else:
         value = request.form["value"]
         note = request.form["note"]
@@ -90,9 +90,79 @@ def log(tid):
 def view(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
     if tracker.tracker_type == "Numerical":
-        return render_template("log.html", tracker=tracker, logs=tracker.numerical_log)
+        return render_template("view_log.html", tracker=tracker, logs=tracker.numerical_log)
     else:
-        return render_template("log.html", tracker=tracker, logs=tracker.mcq_log)
+        return render_template("view_log.html", tracker=tracker, logs=tracker.mcq_log)
+
+
+@app.route("/delete/<int:tid>")
+def delete(tid):
+    tracker = Tracker_info.query.filter(
+        Tracker_info.tracker_id == tid).one()
+    Tracker_info.query.filter(
+        Tracker_info.tracker_id == tid).delete()
+    db.session.commit()
+    return redirect("/dashboard/{}".format(tracker.user_id))
+
+
+@app.route("/edit/<int:tid>", methods=["GET", "POST"])
+def edit(tid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    if request.method == "GET":
+        return render_template("edit_tracker.html", tracker=tracker)
+    else:
+        tracker.name = request.form["name"]
+        tracker.description = request.form["description"]
+        db.session.add(tracker)
+        db.session.commit()
+        return redirect("/dashboard/{}".format(tracker.user_id))
+
+
+@app.route("/deletelog/<int:tid>/<int:lid>")
+def delete_log(tid, lid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    if tracker.tracker_type == "MultipleChoice":
+        Mcq_log.query.filter(Mcq_log.log_id == lid).delete()
+        db.session.commit()
+        return render_template("view_log.html", tracker=tracker, logs=tracker.mcq_log)
+    else:
+        Numerical_log.query.filter(Numerical_log.log_id == lid).delete()
+        db.session.commit()
+        return render_template("view_log.html", tracker=tracker, logs=tracker.numerical_log)
+
+
+@app.route("/editlog/<int:tid>/<int:lid>", methods=["GET", "POST"])
+def edit_log(tid, lid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    if tracker.tracker_type == "MultipleChoice":
+        log = Mcq_log.query.filter(Mcq_log.log_id == lid).one()
+
+        if request.method == "GET":
+            return render_template("edit_log.html", log=log, tracker=tracker)
+        elif request.method == "POST":
+            log.timestamp = datetime.strptime(
+                request.form["timestamp"], '%Y-%m-%dT%H:%M')
+            log.value = request.form['value']
+            log.note = request.form['note']
+            db.session.add(log)
+            db.session.commit()
+            return render_template("view_log.html", tracker=tracker,
+                                   logs=tracker.mcq_log)
+
+    elif tracker.tracker_type == "Numerical":
+        log = Numerical_log.query.filter(Numerical_log.log_id == lid).one()
+
+        if request.method == "GET":
+            return render_template("edit_log.html", log=log, tracker=tracker)
+        elif request.method == "POST":
+            log.timestamp = datetime.strptime(
+                request.form["timestamp"], '%Y-%m-%dT%H:%M')
+            log.value = request.form['value']
+            log.note = request.form['note']
+            db.session.add(log)
+            db.session.commit()
+            return render_template("view_log.html", tracker=tracker,
+                                   logs=tracker.numerical_log)
 
 
 if __name__ == '__main__':

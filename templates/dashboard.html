@@ -10,16 +10,15 @@
     <h1>Welcome {{ user["user_name"] }}</h1>
     <form action="/add/{{user['user_id']}}" method="POST">
       <label for="name">Tracker name</label>
-      <input type="text" name="name" />
+      <input type="text" name="name" required />
       <br />
       <label for="description">Description</label>
       <input type="text" name="description" id="" />
       <br />
       <label for="tracker_type">Tracker type</label>
-      <select name="tracker_type" id="">
+      <select name="tracker_type" required>
         <option value="Numerical">Numerical</option>
         <option value="MultipleChoice">MultipleChoice</option>
-        <option value="Time Duration">Time Duration</option>
       </select>
       <br />
       <label for="options">Options</label>
@@ -49,6 +48,10 @@
             <a href="/view/{{tracker['tracker_id']}}"> view</a>
 
             <a href="/log/{{tracker['tracker_id']}}">log</a>
+
+            <a href="/delete/{{tracker['tracker_id']}}">delete</a>
+
+            <a href="/edit/{{tracker['tracker_id']}}">edit</a>
           </td>
         </tr>
         {% endfor %}

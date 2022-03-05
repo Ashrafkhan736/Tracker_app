@@ -15,14 +15,24 @@
           <th>Time stamp</th>
           <th>Value</th>
           <th>Note</th>
+          <th>Operations</th>
         </tr>
       </thead>
       <tbody>
         {% for log in logs |sort(attribute="timestamp", reverse = True) %}
         <tr>
-          <td>{{log["timestamp"].strftime("%d %B %Y %H:%M:%S")}}</td>
+          <td>{{log["timestamp"].strftime("%d %B %Y %H:%M")}}</td>
           <td>{{log["value"]}}</td>
           <td>{{log["note"]}}</td>
+          <td>
+            <a href="/editlog/{{tracker['tracker_id']}}/{{log['log_id']}}"
+              >edit</a
+            >
+
+            <a href="/deletelog/{{tracker['tracker_id']}}/{{log['log_id']}}"
+              >delete</a
+            >
+          </td>
         </tr>
         {% endfor %}
       </tbody>
