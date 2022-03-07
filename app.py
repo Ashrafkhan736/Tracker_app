@@ -74,6 +74,11 @@ def delete_tracker(tid):
         Tracker_info.tracker_id == tid).one()
     Tracker_info.query.filter(
         Tracker_info.tracker_id == tid).delete()
+    if tracker.tracker_type == "Numerical":
+        Numerical_log.query.filter(Numerical_log.tracker_id == tid).delete()
+    else:
+        Mcq_log.query.filter(Mcq_log.tracker_id == tid).delete()
+
     db.session.commit()
     return redirect("/dashboard/{}".format(tracker.user_id))
 
@@ -166,5 +171,5 @@ def edit_log(tid, lid):
 
 if __name__ == '__main__':
     # Run the Flask app
-    app.run(host='127.0.0.1', port=5000)
-    app.debug = True
+    app.run(debug=True)
+    #app.debug = True

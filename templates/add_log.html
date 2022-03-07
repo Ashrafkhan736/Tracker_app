@@ -15,7 +15,7 @@
     <form action="/add_log/{{tracker['tracker_id']}}" method="POST">
       <label for="value"> value</label>
       {% if tracker['tracker_type'] == "Numerical" %}
-      <input type="number" name="value" required />
+      <input type="number" step="any" name="value" required />
       {% else %}
       <select name="value" required>
         {% for choice in tracker['options'].split(',') %}
