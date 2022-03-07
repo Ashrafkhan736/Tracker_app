@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-  </head>
+<!--   </head>
   <body>
     <h1>Log your information</h1>
     <h3>
@@ -32,6 +32,7 @@
   </body>
 </html>
 
+ -->
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -54,7 +55,7 @@
   <form action="/add_log/{{tracker['tracker_id']}}" method="POST">
     <label for="value"> <h3>Enter the Value</h3></label>
     {% if tracker['tracker_type'] == "Numerical" %}
-    <input type="number" name="value" required />
+    <input type="number" step="any" name="value" required />
     {% else %}
     <select name="value" required>
       {% for choice in tracker['options'].split(',') %}
@@ -66,7 +67,7 @@
     <input type="text" name="note" /> <br> 
     <button class="btn btn-primary btn-lg" style="position: relative; bottom: -40px;" type="submit">Submit</button>
   </form>
-</div><br><br>
+</div><br>
 <a class="mx-2 my-5 text-light btn btn-dark" style="font-size: 20px;" href="/dashboard/{{tracker['user_id']}}"><b> Go to dashboard</b> </a>
 
 
@@ -89,4 +90,3 @@
 </body>
 
 </html>
->>>>>>> 6a4887ec4351ed7cbe0af6b9b154715bc6091224
