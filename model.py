@@ -25,18 +25,6 @@ class Tracker_info(db.Model):
     mcq_log = db.relationship(
         'Mcq_log', backref='tracker_info', lazy=True)
 
-
-'''
-CREATE TABLE "numerical_log" (
-	"log_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"tracker_id"	INTEGER NOT NULL,
-	"timestamp"	TEXT NOT NULL,
-	"value"	NUMERIC NOT NULL,
-	"note"	TEXT,
-	FOREIGN KEY("tracker_id") REFERENCES "tracker_info"
-);'''
-
-
 class Numerical_log(db.Model):
     log_id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now())
