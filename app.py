@@ -18,11 +18,12 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/signin", methods=["GET", "POST"])
-def signin():
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
     if request.method == "POST":
         user_name = request.form["username"]
-        user = User(user_name=user_name)
+        password = request.form["password"]
+        user = User(user_name=user_name, password=password)
         db.session.add(user)
         db.session.commit()
         return redirect("/")
@@ -34,7 +35,9 @@ def signin():
 def login():
     if request.method == "POST":
         user_name = request.form["username"]
-        user = User.query.filter(User.user_name == user_name).one()
+        password = request.form["password"]
+        user = User.query.filter(
+            User.user_name == user_name and User.password == password).one()
         return redirect("/dashboard/{}".format(user.user_id))
     else:
         return render_template("login.html")
@@ -171,10 +174,5 @@ def edit_log(tid, lid):
 
 if __name__ == '__main__':
     # Run the Flask app
-<<<<<<< HEAD
     app.run(debug=True)
     #app.debug = True
-=======
-    app.run(host='127.0.0.1', port=5000, debug=True)
-    
->>>>>>> 6a4887ec4351ed7cbe0af6b9b154715bc6091224
