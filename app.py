@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 from flask_restful import Api
 from model import *
 import os
@@ -171,5 +171,10 @@ def edit_log(tid, lid):
 
 if __name__ == '__main__':
     # Run the Flask app
+<<<<<<< HEAD
     app.run(debug=True)
     #app.debug = True
+=======
+    app.run(host='127.0.0.1', port=5000, debug=True)
+    
+>>>>>>> 6a4887ec4351ed7cbe0af6b9b154715bc6091224
