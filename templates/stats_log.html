@@ -15,60 +15,35 @@
       type="text/css"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <title>Editing log</title>
+    <title>Stats_log</title>
   </head>
-
-  <body class="bg-rest">
+  <body class="bg-dash">
     <a
       class="btn btn-dark btn-block mx-1"
       style="font-size: 20px; position: absolute; right: 20px"
       href="/"
       >Logout <i class="bi bi-box-arrow-right"></i
     ></a>
-    <h1 class="mx-3 my-3" style="font-size: 60px">Edit your log</h1>
-    <div class="container mx-2 my-5" style="font-size: 25px">
-      <form
-        action="/edit_log/{{log['tracker_id']}}/{{log['log_id']}}"
-        method="post"
-      >
-        <label for="timestamp"><h3>Time stamp</h3></label>
-        <input
-          type="datetime-local"
-          name="timestamp"
-          value="{{log['timestamp'].strftime('%Y-%m-%dT%H:%M')}}"
-        />
-        <br />
-        <br />
-        <label for="value"><h3>Value</h3></label>
-        {% if tracker['tracker_type'] == "Numerical" %}
-        <input type="number" step="any" name="value" value="{{log['value']}}" />
-        {% else %}
-        <select name="value" required>
-          {% for choice in tracker['options'].split(',') %}
-          <option value="{{choice}}">{{choice}}</option>
-          {% endfor %}
-        </select>
-        {% endif %} <br />
-        <br />
-        <label for="note"><h3>Note</h3></label>
-        <input type="text" name="note" value="{{log['note']}}" /> <br />
-        <br />
-        <button
-          class="btn btn-primary btn-lg"
-          style="position: relative; bottom: -10px"
-          type="submit"
-        >
-          Submit
-        </button>
-      </form>
+
+    <img
+      src="{{ url_for('static', filename='trendline.png') }}"
+      alt="trendline"
+      height="600"
+    />
+    <div class="container">
+      {% if ttype == "Numerical" %} <strong>Mimimum Value</strong> : {{mini}}
+      <br />
+      <strong>Maximum Value</strong> : {{maxi}} <br />
+      <strong>Average Value</strong> : {{avg}} {% else %}
+      <strong>Maximum Occurance</strong> : {{maxi}} <br />
+      <strong>Minimum Occurance</strong> : {{mini}} {% endif %}
     </div>
     <a
       class="mx-2 my-1 text-light btn btn-dark"
-      style="font-size: 20px; "
-      href="/view_log/{{log['tracker_id']}}"
+      style="font-size: 20px"
+      href="/view_log/{{tid}}"
       >view log</a
     >
-
     <!------------------------------------------------ JS FOR BOOTSTRAP ------------------------------------------------------------->
 
     <script

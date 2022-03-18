@@ -14,12 +14,12 @@
 
 <body class="bg-dash">
   
-  <a class="btn btn-dark btn-block mx-1" style="font-size:20px; position: absolute; right: 20px;" href="#">Logout <i class="bi bi-box-arrow-right"></i></a>
+  <a class="btn btn-dark btn-block mx-1" style="font-size:10px; position: absolute; right: 20px;" href="/">Logout <i class="bi bi-box-arrow-right"></i></a>
 
-  <h1 class="mx-3 my-3" style="font-size: 60px;">Welcome {{ user["user_name"] }}</h1>
+  <h1 class="mx-3 my-3" style="font-size: 30px;">Welcome {{ user["user_name"] }}</h1>
   <form action="/add_tracker/{{user['user_id']}}" method="POST">
     <div class="mx-5">
-      <div style="font-size: 20px">
+      <div style="font-size: 15px">
 
         <label for="name"><b> Tracker name</b></label>
         <input class="col-sm-3 my-3" type="text" name="name" required />
@@ -41,7 +41,7 @@
   </div>
   </div>
 
-  <h3 style="font-size: 45px; position:relative; left: 500px;">List of available trackers</h3>
+  <h3 style="font-size: 15px; text-align: center;">List of available trackers</h3>
   <div class="container">
   <table class="table table-hover table-dark">
     <thead>
@@ -64,6 +64,9 @@
           <a class="btn btn-outline-light btn-sm mx-1" href="/delete_tracker/{{tracker['tracker_id']}}"><b>delete</b></a>
 
           <a class="btn btn-outline-light btn-sm mx-1" href="/edit_tracker/{{tracker['tracker_id']}}"><b>edit</b></a>
+          
+          <a class="btn btn-outline-light btn-sm mx-1" href="/stats_log/{{tracker['tracker_id']}}"><b>stats</b></a>
+
         </td>
       </tr>
       {% endfor %}

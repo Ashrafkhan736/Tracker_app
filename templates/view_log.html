@@ -1,47 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='style.css') }}">
-  <title>Document</title>
-</head>
+  <body class="bg-dash">
+    <a
+      class="btn btn-dark btn-block mx-1"
+      style="font-size: 20px; position: absolute; right: 20px"
+      href="/"
+      >Logout <i class="bi bi-box-arrow-right"></i
+    ></a>
+    <h1 class="mx-3 my-3" style="font-size: 60px">
+      Information about {{tracker["name"]}}
+    </h1>
+    <br />
+    <p class="mx-3" style="font-size: 30px">{{tracker["description"]}}</p>
+    <br />
+    <div class="container my-5" style="font-size: 18px">
+      <table class="table table-dark table-hover">
+        <thead>
+          <tr>
+            <th>Time stamp</th>
+            <th>Value</th>
+            <th>Note</th>
+            <th>Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs |sort(attribute="timestamp", reverse = True) %}
+          <tr>
+            <td>{{log["timestamp"].strftime("%d %B %Y %H:%M")}}</td>
+            <td>{{log["value"]}}</td>
+            <td>{{log["note"]}}</td>
+            <td>
+              <a
+                class="btn btn-light btn-sm"
+                href="/edit_log/{{tracker['tracker_id']}}/{{log['log_id']}}"
+                ><b> edit </b></a
+              >
 
-<body class="bg-dash">
-  <a class="btn btn-dark btn-block mx-1" style="font-size:20px; position: absolute; right: 20px;" href="#">Logout <i class="bi bi-box-arrow-right"></i></a>
-  <h1 class="mx-3 my-3" style="font-size: 60px;">Information about {{tracker["name"]}}</h1><br>
-  <p class="mx-3" style="font-size: 30px;">{{tracker["description"]}}</p><br>
-  <div class="container my-5" style="font-size: 18px;">
-    <table class="table table-dark table-hover">
-      <thead>
-        <tr>
-          <th>Time stamp</th>
-          <th>Value</th>
-          <th>Note</th>
-          <th>Operations</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for log in logs |sort(attribute="timestamp", reverse = True) %}
-        <tr>
-          <td>{{log["timestamp"].strftime("%d %B %Y %H:%M")}}</td>
-          <td>{{log["value"]}}</td>
-          <td>{{log["note"]}}</td>
-          <td>
-            <a class="btn btn-light btn-sm" href="/edit_log/{{tracker['tracker_id']}}/{{log['log_id']}}"><b> edit </b></a>
-
-            <a class="btn btn-light btn-sm" href="/delete_log/{{tracker['tracker_id']}}/{{log['log_id']}}"><b>delete</b></a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <a class="mx-5 text-light btn btn-dark" style="font-size: 20px;" href="/dashboard/{{tracker['user_id']}}"><b> Go to dashboard</b> </a>
-</body>
-
+              <a
+                class="btn btn-light btn-sm"
+                href="/delete_log/{{tracker['tracker_id']}}/{{log['log_id']}}"
+                ><b>delete</b></a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <a
+      class="mx-5 text-light btn btn-dark"
+      style="font-size: 20px"
+      href="/dashboard/{{tracker['user_id']}}"
+      ><b> Go to dashboard</b>
+    </a>
+  </body>
 </html>

@@ -1,8 +1,9 @@
 from datetime import datetime
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request
 from flask_restful import Api
 from model import *
 import os
+import matplotlib.pyplot as plt
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
@@ -11,6 +12,47 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + \
     os.path.join(current_dir, "tracker.sqlite3")
 #api = Api(app)
 app.app_context().push()
+
+
+def graph(logs, ttype):
+    if ttype == "Numerical":
+        values = [log.value for log in logs]
+        time = [log.timestamp.strftime("%d %b %H:%M") for log in logs]
+        # f = plt.figure()
+        # f.set_figwidth(15)
+        # f.set_figheight(8)
+        plt.rcParams["figure.figsize"] = (15, 10)
+        plt.plot(time, values)
+        plt.title("Trend line")
+        plt.xlabel("Dates")
+        plt.ylabel("Values")
+        plt.xticks(rotation=30, ha='right')
+        plt.savefig("./static/trendline.png")
+        plt.close()
+    else:
+        values = [log.value for log in logs]
+        plt.rcParams["figure.figsize"] = (15, 10)
+        plt.hist(values,)
+        plt.xlabel("Choices")
+        plt.ylabel("frequency")
+        plt.xticks(rotation=30, ha='right')
+        plt.savefig("./static/trendline.png")
+        plt.close()
+    return
+
+
+def numerical_stats(logs):
+    values = [log.value for log in logs]
+    return min(values), max(values), (sum(values)/len(values))
+
+
+def mcq_stats(logs):
+    options = {}
+    for log in logs:
+        options[log.value] = options.get(log.value, 0) + 1
+
+    options_sort = sorted(options.keys(), key=lambda x: options[x])
+    return options_sort[0], options_sort[-1]
 
 
 @app.route("/")
@@ -172,7 +214,25 @@ def edit_log(tid, lid):
                                    logs=tracker.numerical_log)
 
 
+# fuctions for drawing time series graphs
+@app.route("/stats_log/<int:tid>")
+def stats_log(tid):
+    tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    mini, maxi, avg = 0, 0, 0
+    if tracker.tracker_type == "Numerical":
+        if len(tracker.numerical_log) > 0:
+            mini, maxi, avg = numerical_stats(tracker.numerical_log)
+        graph(tracker.numerical_log, "Numerical")
+        return render_template("stats_log.html", mini=mini, maxi=maxi, avg=avg, ttype="Numerical", tid=tid)
+    else:
+        mini, maxi = "", ""
+        if len(tracker.mcq_log) > 0:
+            mini, maxi = mcq_stats(tracker.mcq_log)
+        graph(tracker.mcq_log, "MultipleChoice")
+        return render_template("stats_log.html", mini=mini, maxi=maxi, ttype="MultipleChoice", tid=tid)
+
+
 if __name__ == '__main__':
     # Run the Flask app
-    app.run(host = "0.0.0.0",debug=True)
+    app.run(host="0.0.0.0", debug=True)
     #app.debug = True
