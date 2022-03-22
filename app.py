@@ -68,10 +68,13 @@ def signup():
     if request.method == "POST":
         user_name = request.form["username"]
         password = request.form["password"]
-        user = User(user_name=user_name, password=password)
-        db.session.add(user)
-        db.session.commit()
-        return redirect("/")
+        try:
+            user = User(user_name=user_name, password=password)
+            db.session.add(user)
+            db.session.commit()
+            return redirect("/")
+        except:
+            return render_template("signup_error.html")
     else:
         return render_template("signup.html")
 
@@ -81,9 +84,13 @@ def login():
     if request.method == "POST":
         user_name = request.form["username"]
         password = request.form["password"]
-        user = User.query.filter(
-            User.user_name == user_name and User.password == password).one()
-        return redirect("/dashboard/{}".format(user.user_id))
+        try:
+            user = User.query.filter(
+                User.user_name == user_name).filter(User.password == password).one()
+
+            return redirect("/dashboard/{}".format(user.user_id))
+        except:
+            return render_template("login_error.html")
     else:
         return render_template("login.html")
 
@@ -102,18 +109,21 @@ def add_tracker(uid):
         tracker_name = request.form["name"]
         description = request.form["description"]
         tracker_type = request.form["tracker_type"]
-        print(tracker_name, tracker_type, description, uid)
+        #print(tracker_name, tracker_type, description, uid)
         #time = datetime.now()
-        if tracker_type == "MultipleChoice":
-            options = request.form["options"]
-            tracker = Tracker_info(name=tracker_name,
-                                   description=description, tracker_type=tracker_type, user_id=uid, options=options)
-        else:
-            tracker = Tracker_info(name=tracker_name,
-                                   description=description, tracker_type=tracker_type, user_id=uid)
-        db.session.add(tracker)
-        db.session.commit()
-        return redirect("/dashboard/{}".format(uid))
+        try:
+            if tracker_type == "MultipleChoice":
+                options = request.form["options"]
+                tracker = Tracker_info(name=tracker_name,
+                                       description=description, tracker_type=tracker_type, user_id=uid, options=options)
+            else:
+                tracker = Tracker_info(name=tracker_name,
+                                       description=description, tracker_type=tracker_type, user_id=uid)
+            db.session.add(tracker)
+            db.session.commit()
+            return redirect("/dashboard/{}".format(uid))
+        except:
+            return render_template("tracker_error.html", uid=uid)
 
 
 @app.route("/delete_tracker/<int:tid>")

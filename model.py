@@ -13,7 +13,7 @@ class User(db.Model):
 
 class Tracker_info(db.Model):
     tracker_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, unique=True, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now())
     description = db.Column(db.String, nullable=False)
     tracker_type = db.Column(db.String, nullable=False)
@@ -25,6 +25,7 @@ class Tracker_info(db.Model):
         'Numerical_log', backref='tracker_info', lazy=True)
     mcq_log = db.relationship(
         'Mcq_log', backref='tracker_info', lazy=True)
+
 
 class Numerical_log(db.Model):
     log_id = db.Column(db.Integer, primary_key=True)
