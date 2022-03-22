@@ -14,6 +14,7 @@ class User(db.Model):
 class Tracker_info(db.Model):
     tracker_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now())
     description = db.Column(db.String, nullable=False)
     tracker_type = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(

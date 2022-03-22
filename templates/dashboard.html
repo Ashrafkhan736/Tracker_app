@@ -1,96 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='style.css') }}">
-  <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+    <title>Dashboard</title>
+  </head>
 
-</head>
+  <body class="bg-dash">
+    <a class="btn btn-dark btn-block mx-1" style="font-size: 20px; position: absolute; right: 20px" href="/"
+      >Logout <i class="bi bi-box-arrow-right"></i
+    ></a>
 
-<body class="bg-dash">
-  
-  <a class="btn btn-dark btn-block mx-1" style="font-size:10px; position: absolute; right: 20px;" href="/">Logout <i class="bi bi-box-arrow-right"></i></a>
+    <h1 class="mx-3 my-3" style="font-size: 30px">Welcome {{ user["user_name"] }}</h1>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      Add new tracker
+    </button>
 
-  <h1 class="mx-3 my-3" style="font-size: 30px;">Welcome {{ user["user_name"] }}</h1>
-  <form action="/add_tracker/{{user['user_id']}}" method="POST">
-    <div class="mx-5">
-      <div style="font-size: 15px">
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="staticBackdrop"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel" style="color: black">Add tracker</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="color: black">
+            <form action="/add_tracker/{{user['user_id']}}" method="POST" role="form">
+              <div class="form-group">
+                <label for="name"><b> Tracker name</b></label>
+                <input class="col-sm-3 my-3" type="text" name="name" required />
+                <br />
+              </div>
+              <label for="description"><b>Description</b></label>
+              <input class="col-sm-3 my-3" type="text" name="description" id="" />
+              <br />
+              <label for="tracker_type"><b>Tracker type</b></label>
+              <select class="col-sm-2 my-3" name="tracker_type" required>
+                <option value="Numerical">Numerical</option>
+                <option value="MultipleChoice">MultipleChoice</option>
+              </select>
+              <br />
+              <label for="options"><b>Options</b></label>
+              <input class="col-sm-3 my-2" type="text" name="options" placeholder="option1,option2,option3" />
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <label for="name"><b> Tracker name</b></label>
-        <input class="col-sm-3 my-3" type="text" name="name" required />
-        <br>
-        <label for="description"><b>Description</b></label>
-        <input class="col-sm-3 my-3" type="text" name="description" id="" />
-        <br>
-        <label for="tracker_type"><b>Tracker type</b></label>
-        <select class="col-sm-2 my-3" name="tracker_type" required>
-          <option value="Numerical">Numerical</option>
-          <option value="MultipleChoice">MultipleChoice</option>
-        </select>
-        <br>
-        <label for="options"><b>Options</b></label>
-        <input class="col-sm-3 my-2" type="text" name="options" placeholder="Example : option1,option2,option3" />
-        <br>
-        <button class="btn btn-lg btn-dark my-4" type="submit">Submit</button>
-  </form>
-  </div>
-  </div>
+    <h3 style="font-size: 15px; text-align: center">List of available trackers</h3>
+    <div class="container">
+      <table class="table table-hover table-dark">
+        <thead>
+          <tr>
+            <th scope="col">Name</b></th>
+            <th scope="col">Last access</th>
+            <th scope="col">Description</th>
+            <th scope="col">Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tracker in trackers %}
+          <tr>
+            <td>{{tracker["name"]}}</td>
+            <td>{{tracker["timestamp"].strftime("%d %B %Y %H:%M")}}</td>
+            <td>{{tracker["description"]}}</td>
+            <td>
+              <a class="btn btn-outline-light btn-sm mx-1" href="/view_log/{{tracker['tracker_id']}}"><b> view</b></a>
 
-  <h3 style="font-size: 15px; text-align: center;">List of available trackers</h3>
-  <div class="container">
-  <table class="table table-hover table-dark">
-    <thead>
-      <tr>
-        <th><b>Name</b></th>
-        <th><b>Description</b></th>
-        <th><b>Operations</b></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for tracker in trackers %}
-      <tr>
-        <td>{{tracker["name"]}}</td>
-        <td>{{tracker["description"]}}</td>
-        <td>
-          <a class="btn btn-outline-light btn-sm mx-1" href="/view_log/{{tracker['tracker_id']}}"><b> view</b></a>
+              <a class="btn btn-outline-light btn-sm mx-1" href="/add_log/{{tracker['tracker_id']}}"><b>log</b></a>
 
-          <a class="btn btn-outline-light btn-sm mx-1" href="/add_log/{{tracker['tracker_id']}}"><b>log</b></a>
+              <a class="btn btn-outline-light btn-sm mx-1" href="/delete_tracker/{{tracker['tracker_id']}}"
+                ><b>delete</b></a
+              >
 
-          <a class="btn btn-outline-light btn-sm mx-1" href="/delete_tracker/{{tracker['tracker_id']}}"><b>delete</b></a>
+              <a class="btn btn-outline-light btn-sm mx-1" href="/edit_tracker/{{tracker['tracker_id']}}"
+                ><b>edit</b></a
+              >
 
-          <a class="btn btn-outline-light btn-sm mx-1" href="/edit_tracker/{{tracker['tracker_id']}}"><b>edit</b></a>
-          
-          <a class="btn btn-outline-light btn-sm mx-1" href="/stats_log/{{tracker['tracker_id']}}"><b>stats</b></a>
+              <a class="btn btn-outline-light btn-sm mx-1" href="/stats_log/{{tracker['tracker_id']}}"><b>stats</b></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <!------------------------------------------------ JS FOR BOOTSTRAP ------------------------------------------------------------->
 
-</div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
 
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
 
-  <!------------------------------------------------ JS FOR BOOTSTRAP ------------------------------------------------------------->
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
-
-
-
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
-    crossorigin="anonymous"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
-    crossorigin="anonymous"></script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

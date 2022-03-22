@@ -1,15 +1,16 @@
 from datetime import datetime
 from flask import Flask, redirect, render_template, request
-from flask_restful import Api
 from model import *
 import os
 import matplotlib.pyplot as plt
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+
 db.init_app(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + \
     os.path.join(current_dir, "tracker.sqlite3")
+
 #api = Api(app)
 app.app_context().push()
 
@@ -21,22 +22,24 @@ def graph(logs, ttype):
         # f = plt.figure()
         # f.set_figwidth(15)
         # f.set_figheight(8)
-        plt.rcParams["figure.figsize"] = (15, 10)
+        my_dpi = 100
+        plt.figure(figsize=(1200/my_dpi, 700/my_dpi), dpi=my_dpi)
         plt.plot(time, values)
         plt.title("Trend line")
         plt.xlabel("Dates")
         plt.ylabel("Values")
         plt.xticks(rotation=30, ha='right')
-        plt.savefig("./static/trendline.png")
+        plt.savefig("./static/trendline.png", dpi=my_dpi)
         plt.close()
     else:
         values = [log.value for log in logs]
-        plt.rcParams["figure.figsize"] = (15, 10)
+        my_dpi = 100
+        plt.figure(figsize=(1200/my_dpi, 700/my_dpi), dpi=my_dpi)
         plt.hist(values,)
         plt.xlabel("Choices")
         plt.ylabel("frequency")
         plt.xticks(rotation=30, ha='right')
-        plt.savefig("./static/trendline.png")
+        plt.savefig("./static/trendline.png", dpi=my_dpi)
         plt.close()
     return
 
@@ -131,11 +134,16 @@ def delete_tracker(tid):
 @app.route("/edit_tracker/<int:tid>", methods=["GET", "POST"])
 def edit_tracker(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    tracker.timestamp = datetime.now()
+    db.session.add(tracker)
+    db.session.commit()
+
     if request.method == "GET":
         return render_template("edit_tracker.html", tracker=tracker)
     else:
         tracker.name = request.form["name"]
         tracker.description = request.form["description"]
+        tracker.timestamp = datetime.now()
         db.session.add(tracker)
         db.session.commit()
         return redirect("/dashboard/{}".format(tracker.user_id))
@@ -144,6 +152,10 @@ def edit_tracker(tid):
 @app.route("/add_log/<int:tid>", methods=["GET", "POST"])
 def add_log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    tracker.timestamp = datetime.now()
+    db.session.add(tracker)
+    db.session.commit()
+
     if request.method == "GET":
         return render_template("add_log.html", tracker=tracker)
     else:
@@ -161,6 +173,10 @@ def add_log(tid):
 @app.route("/view_log/<int:tid>")
 def view_log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    tracker.timestamp = datetime.now()
+    db.session.add(tracker)
+    db.session.commit()
+
     if tracker.tracker_type == "Numerical":
         return render_template("view_log.html", tracker=tracker, logs=tracker.numerical_log)
     else:
@@ -183,6 +199,10 @@ def delete_log(tid, lid):
 @app.route("/edit_log/<int:tid>/<int:lid>", methods=["GET", "POST"])
 def edit_log(tid, lid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    tracker.timestamp = datetime.now()
+    db.session.add(tracker)
+    db.session.commit()
+
     if tracker.tracker_type == "MultipleChoice":
         log = Mcq_log.query.filter(Mcq_log.log_id == lid).one()
 
@@ -218,6 +238,10 @@ def edit_log(tid, lid):
 @app.route("/stats_log/<int:tid>")
 def stats_log(tid):
     tracker = Tracker_info.query.filter(Tracker_info.tracker_id == tid).one()
+    tracker.timestamp = datetime.now()
+    db.session.add(tracker)
+    db.session.commit()
+
     mini, maxi, avg = 0, 0, 0
     if tracker.tracker_type == "Numerical":
         if len(tracker.numerical_log) > 0:

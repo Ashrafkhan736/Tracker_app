@@ -10,28 +10,18 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
     <title>Document</title>
   </head>
 
   <body class="bg-dash">
-    <a
-      class="btn btn-dark btn-block mx-1"
-      style="font-size: 20px; position: absolute; right: 20px"
-      href="/"
+    <a class="btn btn-dark btn-block mx-1" style="font-size: 20px; position: absolute; right: 20px" href="/"
       >Logout <i class="bi bi-box-arrow-right"></i
     ></a>
-    <h1 class="mx-3 my-3" style="font-size: 60px">
-      Information about {{tracker["name"]}}
-    </h1>
-    <br />
-    <p class="mx-3" style="font-size: 30px">{{tracker["description"]}}</p>
-    <br />
-    <div class="container my-5" style="font-size: 18px">
+    <h1 class="mx-3 my-3">Information about {{tracker["name"]}}</h1>
+
+    <h3 class="mx-3" style="color: white">{{tracker["description"]}}</h3>
+    <div class="container my-5">
       <table class="table table-dark table-hover">
         <thead>
           <tr>
@@ -48,15 +38,11 @@
             <td>{{log["value"]}}</td>
             <td>{{log["note"]}}</td>
             <td>
-              <a
-                class="btn btn-light btn-sm"
-                href="/edit_log/{{tracker['tracker_id']}}/{{log['log_id']}}"
+              <a class="btn btn-light btn-sm" href="/edit_log/{{tracker['tracker_id']}}/{{log['log_id']}}"
                 ><b> edit </b></a
               >
 
-              <a
-                class="btn btn-light btn-sm"
-                href="/delete_log/{{tracker['tracker_id']}}/{{log['log_id']}}"
+              <a class="btn btn-light btn-sm" href="/delete_log/{{tracker['tracker_id']}}/{{log['log_id']}}"
                 ><b>delete</b></a
               >
             </td>
@@ -65,11 +51,11 @@
         </tbody>
       </table>
     </div>
-    <a
-      class="mx-5 text-light btn btn-dark"
-      style="font-size: 20px"
-      href="/dashboard/{{tracker['user_id']}}"
+    <a class="mx-5 text-light btn btn-dark" style="font-size: 20px" href="/dashboard/{{tracker['user_id']}}"
       ><b> Go to dashboard</b>
     </a>
+    <a class="mx-5 text-light btn btn-dark" style="font-size: 20px" href="/add_log/{{tracker['tracker_id']}}"
+      ><b>Add new log</b></a
+    >
   </body>
 </html>

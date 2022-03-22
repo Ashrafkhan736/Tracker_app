@@ -10,33 +10,57 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
     <title>Editing log</title>
   </head>
 
   <body class="bg-rest">
-    <a
-      class="btn btn-dark btn-block mx-1"
-      style="font-size: 20px; position: absolute; right: 20px"
-      href="/"
+    <a class="btn btn-dark btn-block mx-1" style="font-size: 20px; position: absolute; right: 20px" href="/"
       >Logout <i class="bi bi-box-arrow-right"></i
     ></a>
     <h1 class="mx-3 my-3" style="font-size: 60px">Edit your log</h1>
-    <div class="container mx-2 my-5" style="font-size: 25px">
-      <form
-        action="/edit_log/{{log['tracker_id']}}/{{log['log_id']}}"
-        method="post"
-      >
+    <div class="container mx-2 my-5" style="font-size: 25px; color: white">
+      <!-- New form start here -->
+      <form action="/edit_log/{{log['tracker_id']}}/{{log['log_id']}}" method="post">
+        <div class="row mb-3">
+          <label for="timestamp" class="col-sm-2 col-form-label">Time stamp</label>
+          <div class="col-sm-10">
+            <input
+              type="datetime-local"
+              class="form-control"
+              name="timestamp"
+              value="{{log['timestamp'].strftime('%Y-%m-%dT%H:%M')}}"
+            />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="value" class="col-sm-2 col-form-label">Value</label>
+          <div class="col-sm-10">
+            {% if tracker['tracker_type'] == "Numerical" %}
+            <input type="number" class="form-control" step="any" name="value" value="{{log['value']}}" />
+            {% else %}
+            <select name="value" class="form-select" required>
+              <option selected disabled>Open this select menu</option>
+              {% for choice in tracker['options'].split(',') %}
+              <option value="{{choice}}">{{choice}}</option>
+              {% endfor %}
+            </select>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="note" class="col-sm-2 col-form-label">Note</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="note" value="{{log['note']}}" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <!-- new form end here -->
+
+      <!-- <form action="/edit_log/{{log['tracker_id']}}/{{log['log_id']}}" method="post">
         <label for="timestamp"><h3>Time stamp</h3></label>
-        <input
-          type="datetime-local"
-          name="timestamp"
-          value="{{log['timestamp'].strftime('%Y-%m-%dT%H:%M')}}"
-        />
+        <input type="datetime-local" name="timestamp" value="{{log['timestamp'].strftime('%Y-%m-%dT%H:%M')}}" />
         <br />
         <br />
         <label for="value"><h3>Value</h3></label>
@@ -53,21 +77,15 @@
         <label for="note"><h3>Note</h3></label>
         <input type="text" name="note" value="{{log['note']}}" /> <br />
         <br />
-        <button
-          class="btn btn-primary btn-lg"
-          style="position: relative; bottom: -10px"
-          type="submit"
-        >
-          Submit
-        </button>
-      </form>
+        <button class="btn btn-primary btn-lg" style="position: relative; bottom: -10px" type="submit">Submit</button>
+      </form> -->
     </div>
-    <a
-      class="mx-2 my-1 text-light btn btn-dark"
-      style="font-size: 20px; "
-      href="/view_log/{{log['tracker_id']}}"
-      >view log</a
-    >
+    <a class="mx-2 my-5 text-light btn btn-dark" style="font-size: 20px" href="/view_log/{{log['tracker_id']}}">
+      <b>view log</b>
+    </a>
+    <a class="mx-2 my-5 text-light btn btn-dark" style="font-size: 20px" href="/dashboard/{{tracker['user_id']}}"
+      ><b> Go to dashboard</b>
+    </a>
 
     <!------------------------------------------------ JS FOR BOOTSTRAP ------------------------------------------------------------->
 
