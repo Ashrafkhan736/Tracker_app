@@ -1,8 +1,12 @@
+from asyncio import tasks
 from datetime import datetime
+from unittest import result
 from flask import Flask, redirect, render_template, request
 from model import *
 import os
 import matplotlib.pyplot as plt
+import workers
+import tasks
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
@@ -12,6 +16,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + \
     os.path.join(current_dir, "tracker.sqlite3")
 
 #api = Api(app)
+celery = workers.celery
+celery.conf.update(broker_url="redis://localhost:6379/1",
+                   result_backend="redis://localhost:6379/2")
+celery.Task = workers.ContextTask
 app.app_context().push()
 
 
@@ -264,6 +272,12 @@ def stats_log(tid):
             mini, maxi = mcq_stats(tracker.mcq_log)
         graph(tracker.mcq_log, "MultipleChoice")
         return render_template("stats_log.html", mini=mini, maxi=maxi, ttype="MultipleChoice", tid=tid)
+
+
+@app.route("/hello/<name>")
+def hello(name):
+    job = tasks.just_say_hello.delay(name)
+    return str(job), 200
 
 
 if __name__ == '__main__':
